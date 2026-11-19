@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Фитнес — Master Plan</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#f5f5f7;--card:#fff;--text:#1d1d1f;--sub:#6e6e73;--grey:#86868b;
+  --line:rgba(0,0,0,.08);--input:#f5f5f7;--blue:#0071e3;--green:#34c759;
+  --red:#ff453a;--segment:#e3e3e8;--header:rgba(251,251,253,.82);
+  --dock:rgba(255,255,255,.75);--shadow:0 8px 30px rgba(0,0,0,.05)
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#000;--card:#1c1c1e;--text:#f5f5f7;--sub:#aeaeb2;--line:rgba(255,255,255,.12);
+  --input:#2c2c2e;--segment:#2c2c2e;--header:rgba(0,0,0,.75);--dock:rgba(28,28,30,.78);
+  --shadow:0 8px 30px rgba(0,0,0,.35)}
+}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;letter-spacing:-.01em}
+button,input,select{font:inherit;color:inherit}
+
+/* Header */
+.header{position:sticky;top:0;z-index:100;background:var(--header);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--line)}
+.header-inner{max-width:880px;margin:0 auto;padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
+.brand{font-size:17px;font-weight:700;letter-spacing:-.02em}
+.today-pill{font-size:13px;color:var(--sub);background:var(--input);padding:6px 12px;border-radius:999px}
+
+main{max-width:880px;margin:0 auto;padding:0 16px 130px}
+.hero{text-align:center;padding:40px 10px 24px}
+.eyebrow{color:var(--blue);font-size:14px;font-weight:700;letter-spacing:.02em;margin:0 0 8px}
+.hero h1{font-size:52px;line-height:1.05;letter-spacing:-.035em;margin:0;font-weight:800}
+.hero h1 span{color:var(--grey)}
+.hero p.desc{color:var(--sub);font-size:18px;line-height:1.45;max-width:560px;margin:16px auto 0}
+.chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.chip{font-size:13px;font-weight:600;background:var(--card);padding:8px 13px;border-radius:999px;box-shadow:var(--shadow)}
+
+.card{background:var(--card);border-radius:20px;padding:20px;margin-bottom:16px;box-shadow:var(--shadow)}
+.card h2{font-size:24px;letter-spacing:-.02em;margin:0 0 6px}
+.card h3{font-size:19px;letter-spacing:-.015em;margin:0 0 5px}
+.meta{color:var(--sub);font-size:14px;line-height:1.45}
+.tech{color:var(--sub);font-size:14px;line-height:1.5;margin:8px 0 12px}
+
+.rule{text-align:center;color:var(--sub);font-size:14px;line-height:1.6}
+.rule b{color:var(--text)}
+
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.stepper{display:flex;align-items:center;gap:6px;background:var(--input);padding:4px;border-radius:999px}
+.stepper button{width:34px;height:34px;border-radius:50%;border:0;background:var(--card);cursor:pointer;font-size:20px;box-shadow:0 1px 5px rgba(0,0,0,.1)}
+.stepper select{border:0;background:transparent;font-weight:700;padding:8px;outline:none;cursor:pointer}
+
+.segment{display:flex;background:var(--segment);padding:3px;border-radius:12px;gap:3px;margin-top:16px}
+.segment button{flex:1;border:0;background:transparent;padding:10px 6px;border-radius:9px;cursor:pointer;font-size:14px;font-weight:600;color:var(--sub);transition:.2s}
+.segment button.active{background:var(--card);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.12)}
+
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center;margin-top:16px}
+.week-grid div{padding:10px 2px;border-radius:12px;background:var(--input);font-size:11px;color:var(--sub)}
+.week-grid b{display:block;font-size:12px;color:var(--text);margin-top:3px}
+.week-grid .today{background:var(--blue);color:#fff}.week-grid .today b{color:#fff}
+
+.progressbar{height:8px;background:var(--input);border-radius:99px;overflow:hidden;margin-top:16px}
+.progressbar i{display:block;height:100%;background:var(--green);border-radius:99px;transition:width .4s}
+
+.badge{font-size:11px;font-weight:700;padding:4px 8px;border-radius:999px;background:var(--input);color:var(--sub);vertical-align:2px}
+.badge.up{background:rgba(52,199,89,.15);color:#248a3d}
+
+.sets{display:grid;gap:8px;margin-top:14px}
+.set-row{display:grid;grid-template-columns:78px 1fr 1fr 22px;gap:8px;align-items:center}
+.set-row label{font-size:13px;color:var(--sub)}
+.set-row input{width:100%;height:48px;border:1.5px solid transparent;background:var(--input);border-radius:12px;text-align:center;font-size:17px;font-weight:600;outline:none;transition:.2s}
+.set-row input:focus{background:var(--card);border-color:var(--blue);box-shadow:0 0 0 4px rgba(0,113,227,.15)}
+.done{color:var(--green);font-weight:800}
+
+.btn{display:inline-block;border:0;background:var(--blue);color:#fff;padding:11px 22px;border-radius:999px;font-size:15px;font-weight:600;cursor:pointer}
+.btn:hover{background:#0077ed}
+.btn-small{border:0;background:var(--input);color:var(--blue);padding:9px 16px;border-radius:999px;font-size:14px;font-weight:600;cursor:pointer}
+.btn-ghost{border:0;background:transparent;color:#ff453a;padding:10px;font-size:14px;cursor:pointer}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}.hero h1{font-size:38px}.hero p.desc{font-size:16px}}
+.form label{display:block;font-size:13px;color:var(--sub);margin:0 0 6px 4px}
+.form input,.form select{width:100%;height:50px;border:1.5px solid transparent;background:var(--input);border-radius:12px;padding:0 14px;font-size:17px;outline:none;margin-bottom:12px}
+.form input:focus{background:var(--card);border-color:var(--blue);box-shadow:0 0 0 4px rgba(0,113,227,.15)}
+
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{color:var(--sub);font-weight:600;text-align:left}
+th,td{padding:10px 6px;border-bottom:1px solid var(--line)}
+canvas{width:100%;height:220px}
+.kcal{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;text-align:center}
+.kcal div{background:var(--input);border-radius:16px;padding:16px 6px}
+.kcal b{display:block;font-size:26px;color:var(--blue);letter-spacing:-.03em}
+.kcal span{font-size:12px;color:var(--sub)}
+@media(max-width:640px){.kcal{grid-template-columns:1fr 1fr}}
+ul,ol{line-height:1.7;color:var(--sub);font-size:15px;padding-left:22px}ul b,ol b{color:var(--text)}
+.hidden{display:none}
+
+/* Dock */
+.dock{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:200;display:flex;gap:2px;padding:6px;background:var(--dock);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border:1px solid var(--line);border-radius:999px;box-shadow:0 16px 40px rgba(0,0,0,.18)}
+.dock button{min-width:78px;border:0;background:transparent;color:var(--grey);padding:8px 10px;border-radius:999px;cursor:pointer;font-size:11px;font-weight:600}
+.dock button span{display:block;font-size:21px;line-height:1.1}
+.dock button.active{background:var(--card);color:var(--blue);box-shadow:0 3px 12px rgba(0,0,0,.13)}
+@media(max-width:480px){.dock button{min-width:66px}}
+
+#timer{position:fixed;left:50%;transform:translateX(-50%);bottom:96px;z-index:300;background:var(--text);color:var(--bg);padding:13px 22px;border-radius:999px;font-weight:700;font-size:16px;display:none;box-shadow:0 14px 35px rgba(0,0,0,.25)}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="brand">Фитнес</div>
+    <div class="today-pill" id="todayChip">Сегодня</div>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <p class="eyebrow">MASTER PLAN • НЕДЕЛЯ ЗА НЕДЕЛЕЙ</p>
+    <h1>Плечи и руки.<br><span>Сила в деталях.</span></h1>
+    <p class="desc">Три тренировки в неделю для рекомпозиции. Программа зафиксирована — ты вносишь только вес и повторения.</p>
+    <div class="chips">
+      <span class="chip">76.6 кг</span><span class="chip">178 см</span><span class="chip">20 лет</span>
+      <span class="chip">Талия 82 см → меньше</span><span class="chip">≈2400 ккал</span>
+    </div>
+  </div>
+
+  <!-- ТРЕНИРОВКИ -->
+  <section id="tab-workout">
+    <div class="card">
+      <div class="controls">
+        <div class="stepper">
+          <button id="prevWeek">‹</button>
+          <select id="weekSelect"></select>
+          <button id="nextWeek">›</button>
+        </div>
+        <button class="btn-ghost" id="resetWeek">Сбросить неделю</button>
+      </div>
+
+      <div class="segment">
+        <button class="day-btn" data-day="mon">Понедельник</button>
+        <button class="day-btn" data-day="wed">Среда</button>
+        <button class="day-btn" data-day="fri">Пятница</button>
+      </div>
+
+      <div class="week-grid" id="weekGrid"></div>
+      <p class="meta" id="weekInfo" style="margin-top:14px"></p>
+      <div class="progressbar"><i id="bar"></i></div>
+      <p class="meta" id="barText" style="margin-top:8px"></p>
+    </div>
+
+    <div class="card rule">
+      <b>Темп 3–1–2.</b> 3 секунды опускаем, 1 секунда пауза, 2 секунды поднимаем.<br>
+      Локти и колени не блокируем. Запас до отказа: <b>RIR 1–2</b>.
+    </div>
+
+    <div id="exList"></div>
+  </section>
+
+  <!-- ЗАМЕРЫ -->
+  <section id="tab-body" class="hidden">
+    <div class="card form">
+      <h2>Профиль</h2>
+      <p class="meta">Твои исходные данные для расчёта нормы белка.</p><br>
+      <div class="grid2">
+        <div><label>Вес, кг</label><input id="pWeight" type="number" step="0.1" value="76.6"></div>
+        <div><label>Рост, см</label><input id="pHeight" type="number" value="178"></div>
+        <div><label>Возраст</label><input id="pAge" type="number" value="20"></div>
+        <div><label>Талия сейчас, см</label><input id="pWaist" type="number" step="0.1" value="82"></div>
+      </div>
+      <p class="meta" id="bmiText"></p><br>
+      <button class="btn" id="saveProfile">Сохранить</button>
+    </div>
+
+    <div class="card form">
+      <h2>Новый замер</h2>
+      <p class="meta">Утром натощак, 1 раз в 4 недели.</p><br>
+      <div class="grid2">
+        <div><label>Дата</label><input id="mDate" type="date"></div>
+        <div><label>Вес, кг</label><input id="mWeight" type="number" step="0.1" placeholder="76.6"></div>
+        <div><label>Талия, см</label><input id="mWaist" type="number" step="0.1" placeholder="82"></div>
+        <div><label>Грудь, см</label><input id="mChest" type="number" step="0.1"></div>
+        <div><label>Плечи, см</label><input id="mShoulders" type="number" step="0.1"></div>
+        <div><label>Бицепс, см</label><input id="mBicep" type="number" step="0.1"></div>
+        <div><label>Предплечье, см</label><input id="mForearm" type="number" step="0.1"></div>
+        <div><label>Бедро, см</label><input id="mLeg" type="number" step="0.1"></div>
+      </div>
+      <button class="btn" id="addMeasure">Добавить замер</button>
+    </div>
+
+    <div class="card"><h3>Динамика</h3><p class="meta">Вес и талия по замерам</p><canvas id="chart" width="900" height="220"></canvas></div>
+    <div class="card"><h3>История замеров</h3><div id="measureTable"></div></div>
+  </section>
+
+  <!-- ПРОГРЕСС -->
+  <section id="tab-progress" class="hidden">
+    <div class="card">
+      <h2>Прогрессируй безопасно.</h2>
+      <ol>
+        <li>Записывай каждый подход: <b>вес × повторения</b>.</li>
+        <li>Сначала закрой максимум диапазона во всех подходах. Например: 10, 10, 10 вместо 8–10.</li>
+        <li>Получилось с запасом RIR 1–2 — на следующей тренировке <b>+1–2 кг</b>.</li>
+        <li>Не получилось — оставь тот же вес и добивай повторения.</li>
+        <li>Каждые 4 недели делай замеры. Цель: вес 76–77 кг, талия вниз, плечи и руки вверх.</li>
+      </ol>
+    </div>
+    <div class="card"><h3>Готово к повышению веса</h3><div id="upList"></div></div>
+    <div class="card form"><h3>История по упражнению</h3><select id="exSelect"></select><div id="exHistory"></div></div>
+  </section>
+
+  <!-- ГИД -->
+  <section id="tab-guide" class="hidden">
+    <div class="card">
+      <h2>Неделя</h2>
+      <div class="week-grid">
+        <div>ПН<b>Плечи + Руки</b></div><div>ВТ<b>Отдых</b></div><div>СР<b>Грудь + Спина</b></div>
+        <div>ЧТ<b>Отдых</b></div><div>ПТ<b>Ноги</b></div><div>СБ<b>Шаги</b></div><div>ВС<b>Отдых</b></div>
+      </div>
+      <ul><li><b>8 000–10 000 шагов</b> в дни отдыха</li><li><b>Сон 7,5–8 часов</b> — мышцы растут во время восстановления</li></ul>
+    </div>
+
+    <div class="card">
+      <h2>Питание</h2><p class="meta">Рекомпозиция при весе 76.6 кг</p><br>
+      <div class="kcal">
+        <div><b>2400</b><span>ккал в день</span></div>
+        <div><b>160–170</b><span>белок, г</span></div>
+        <div><b>230–250</b><span>углеводы, г</span></div>
+        <div><b>65–75</b><span>жиры, г</span></div>
+      </div>
+      <ul>
+        <li><b>Белок:</b> курица, индейка, говядина, яйца, творог, рыба, протеин</li>
+        <li><b>Углеводы:</b> овсянка, рис, гречка, макароны из твёрдых сортов, картофель</li>
+        <li><b>Жиры:</b> орехи, авокадо, яйца, оливковое масло</li>
+        <li><b>Вода:</b> 2.5–3 литра в день</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Безопасность</h2>
+      <ul>
+        <li>Разминка 5 минут: плечи, локти, кисти + 2 лёгких подхода</li>
+        <li>Не вставляй локти и колени в замок — оставляй изгиб 10–15°</li>
+        <li>RIR 1–2 в основных упражнениях, не работай в отказ везде</li>
+        <li>Упражнения на запястья — профилактика для локтей</li>
+        <li>Острая боль, щелчок или онемение — сразу прекращай упражнение</li>
+        <li>Прибавляй только +1–2 кг, без рывков и раскачки корпусом</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<nav class="dock">
+  <button class="tab-btn active" data-tab="workout"><span>🏋️</span>Тренировки</button>
+  <button class="tab-btn" data-tab="body"><span>📏</span>Замеры</button>
+  <button class="tab-btn" data-tab="progress"><span>📈</span>Прогресс</button>
+  <button class="tab-btn" data-tab="guide"><span>🥗</span>Гид</button>
+</nav>
+
+<div id="timer"></div>
+
+<script>
+const PROGRAM={
+mon:{title:"Понедельник — Плечи + Руки · 50–55 мин",ex:[
+{id:"m1",name:"Жим плеч в тренажере",sets:3,min:8,max:10,rest:90,tech:"Ручки на уровне ушей. Вверху локти не выпрямляем до конца."},
+{id:"m2",name:"Махи в кроссовере с нижних блоков",sets:5,min:12,max:15,rest:60,tech:"Средняя дельта. 5-й подход — дроп-сет: сразу сбрось вес на 30% и доделай до жжения."},
+{id:"m3",name:"Обратные махи в Pec-Deck",sets:3,min:15,max:15,rest:60,tech:"Задняя дельта. Грудью к подушке, пауза 1 сек в точке сокращения."},
+{id:"m4a",name:"Суперсет 1А · Сгибания на нижнем блоке EZ",sets:4,min:10,max:12,rest:90,tech:"Локти прижаты к бокам. Сразу без отдыха переходи к 1Б."},
+{id:"m4b",name:"Суперсет 1Б · Разгибания с канатом",sets:4,min:12,max:15,rest:90,tech:"Внизу разводи канаты в стороны. Отдых 90 сек после круга."},
+{id:"m5a",name:"Суперсет 2А · Молотки сидя",sets:4,min:10,max:12,rest:90,tech:"Нейтральный хват, акцент на брахиалис. Сразу переходи к 2Б."},
+{id:"m5b",name:"Суперсет 2Б · Разгибание из-за головы 1 рукой",sets:4,min:10,max:12,rest:85,tech:"На каждую руку. Локоть смотрит строго вверх."},
+{id:"m6a",name:"Сгибания запястий",sets:2,min:20,max:20,rest:60,tech:"Профилактика локтей. Предплечья на скамье, работают только кисти."},
+{id:"m6b",name:"Разгибания запястий хватом сверху",sets:2,min:20,max:20,rest:60,tech:"Подконтрольно, без рывка."}]},
+wed:{title:"Среда — Грудь + Спина + Памп рук · 50–55 мин",ex:[
+{id:"w1",name:"Жим гантелей на наклонной 30°",sets:4,min:8,max:10,rest:90,tech:"Верх груди. Опускай до уровня верха груди, локти не вставляй."},
+{id:"w2",name:"Тяга верхнего блока широким хватом",sets:4,min:8,max:10,rest:90,tech:"Тяни к верху груди, своди лопатки, без раскачки."},
+{id:"w3a",name:"Суперсет А · Сведения в кроссовере",sets:3,min:12,max:15,rest:75,tech:"Фиксация 1 сек перед грудью. Сразу переходи к Б."},
+{id:"w3b",name:"Суперсет Б · Тяга Т-грифа",sets:3,min:8,max:10,rest:75,tech:"К низу живота, фокус на сведении лопаток."},
+{id:"w4",name:"Жим в тренажере на грудь",sets:2,min:10,max:12,rest:60,tech:"Локти под углом 45° к корпусу."},
+{id:"w5",name:"Тяга нижнего блока узким хватом",sets:2,min:10,max:12,rest:60,tech:"К поясу, корпус не раскачиваем."},
+{id:"w6a",name:"Финишер А · Сгибания с гантелями стоя",sets:2,min:15,max:15,rest:60,tech:"Лёгкий вес, памп. С супинацией, без отдыха к Б."},
+{id:"w6b",name:"Финишер Б · Разгибания с канатом",sets:2,min:15,max:15,rest:60,tech:"Лёгкий вес. Отдых 60 сек между кругами."}]},
+fri:{title:"Пятница — Ноги + Пресс + Предплечья · 30–35 мин",ex:[
+{id:"f1",name:"Жим ногами",sets:3,min:10,max:10,rest:120,tech:"Глубокий подконтрольный сед. Колени в замок не выпрямляем."},
+{id:"f2",name:"Гиперэкстензия",sets:3,min:12,max:15,rest:60,tech:"Подконтрольно, пауза 1 сек вверху, без рывка поясницей."},
+{id:"f3",name:"Подъем ног в висе",sets:3,min:0,max:999,rest:60,tech:"Максимум повторений. Подкручивай таз вверх, без инерции."},
+{id:"f4",name:"Сгибание запястий со штангой / гантелями",sets:3,min:20,max:20,rest:60,tech:"Предплечья на скамье, ладони вверх, работают только кисти."},
+{id:"f5",name:"Разгибание запястий хватом сверху",sets:2,min:20,max:20,rest:60,tech:"Полная амплитуда кисти, подконтрольно."}]}
+};
+
+let week=+(localStorage.getItem('gymWeek')||1);
+let day=localStorage.getItem('gymDay')||'mon';
+const getLogs=()=>JSON.parse(localStorage.getItem('gymLogs')||'{}');
+const setLogs=v=>localStorage.setItem('gymLogs',JSON.stringify(v));
+const weekSel=document.getElementById('weekSelect');
+for(let i=1;i<=12;i++)weekSel.innerHTML+=`<option value="${i}">Неделя ${i}</option>`;
+
+function renderWeekGrid(){
+  const names=[['ПН','Тренировка'],['ВТ','Отдых'],['СР','Тренировка'],['ЧТ','Отдых'],['ПТ','Тренировка'],['СБ','Шаги'],['ВС','Отдых']];
+  const today=new Date().getDay();
+  document.getElementById('todayChip').textContent=['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'][today]+([1,3,5].includes(today)?' · Тренировка':' · Отдых');
+  document.getElementById('weekGrid').innerHTML=names.map((n,i)=>`<div class="${today===i+1||(today===0&&i===6)?'today':''}">${n[0]}<b>${n[1]}</b></div>`).join('');
+}
+function updateBar(){
+  const logs=getLogs(),prog=PROGRAM[day];let total=0,done=0;
+  prog.ex.forEach(ex=>{for(let s=1;s<=ex.sets;s++){total++;const v=logs[`w${week}_${day}_${ex.id}_s${s}`];if(v&&v.w&&v.r)done++}});
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('bar').style.width=pct+'%';
+  document.getElementById('barText').textContent=`Выполнено подходов: ${done} из ${total} · ${pct}%`;
+}
+function render(){
+  weekSel.value=week;localStorage.setItem('gymWeek',week);localStorage.setItem('gymDay',day);
+  document.querySelectorAll('.day-btn').forEach(b=>b.classList.toggle('active',b.dataset.day===day));
+  renderWeekGrid();
+  const prog=PROGRAM[day],logs=getLogs();
+  document.getElementById('weekInfo').textContent=prog.title+' · 🔒 Упражнения изменить нельзя';
+  document.getElementById('exList').innerHTML=prog.ex.map(ex=>{
+    let filled=0,allMax=true,rows='';
+    for(let s=1;s<=ex.sets;s++){
+      const k=`w${week}_${day}_${ex.id}_s${s}`,v=logs[k]||{};
+      if(v.w&&v.r)filled++;
+      if(!v.r||+v.r<ex.max)allMax=false;
+      rows+=`<div class="set-row"><label>Подход ${s}</label><input type="number" step="0.5" placeholder="кг" data-key="${k}" data-field="w" value="${v.w||''}"><input type="number" placeholder="${ex.max===999?'MAX':ex.min+'–'+ex.max}" data-key="${k}" data-field="r" value="${v.r||''}"><span class="done">${v.w&&v.r?'✓':''}</span></div>`;
+    }
+    const up=filled===ex.sets&&allMax&&ex.max!==999;
+    return `<div class="card"><h3>${ex.name}</h3><div class="meta">${ex.sets} × ${ex.max===999?'MAX':ex.min+'–'+ex.max} · Отдых ${ex.rest} сек ${up?'<span class="badge up">+1–2 кг в следующий раз</span>':'<span class="badge">Зафиксировано</span>'}</div><div class="tech">${ex.tech}</div><button class="btn-small" onclick="startTimer(${ex.rest})">Таймер · ${ex.rest} сек</button><div class="sets">${rows}</div></div>`;
+  }).join('');
+  updateBar();
+  document.querySelectorAll('#exList input').forEach(inp=>inp.addEventListener('input',e=>{
+    const logs=getLogs(),k=e.target.dataset.key;logs[k]=logs[k]||{};logs[k][e.target.dataset.field]=e.target.value;setLogs(logs);
+    const row=e.target.closest('.set-row'),ins=row.querySelectorAll('input');
+    row.querySelector('.done').textContent=ins[0].value&&ins[1].value?'✓':'';
+    updateBar();renderProgress();
+  }));
+  renderProgress();
+}
+let timerInt;
+function startTimer(sec){
+  const el=document.getElementById('timer');el.style.display='block';let t=sec;el.textContent='Отдых · '+t+' сек';clearInterval(timerInt);
+  timerInt=setInterval(()=>{t--;el.textContent='Отдых · '+t+' сек';if(t<=0){clearInterval(timerInt);el.textContent='Следующий подход';if(navigator.vibrate)navigator.vibrate(300);setTimeout(()=>el.style.display='none',2500)}},1000);
+}
+document.querySelectorAll('.day-btn').forEach(b=>b.onclick=()=>{day=b.dataset.day;render()});
+weekSel.onchange=e=>{week=+e.target.value;render()};
+document.getElementById('prevWeek').onclick=()=>{if(week>1)week--;render()};
+document.getElementById('nextWeek').onclick=()=>{if(week<12)week++;render()};
+document.getElementById('resetWeek').onclick=()=>{if(!confirm('Сбросить записи недели '+week+'?'))return;let l=getLogs();Object.keys(l).forEach(k=>{if(k.startsWith('w'+week+'_'))delete l[k]});setLogs(l);render()};
+
+document.querySelectorAll('.tab-btn').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+  ['workout','body','progress','guide'].forEach(t=>document.getElementById('tab-'+t).classList.toggle('hidden',t!==b.dataset.tab));
+  window.scrollTo({top:0,behavior:'smooth'});if(b.dataset.tab==='body')drawChart();
+});
+
+/* Профиль и замеры */
+function profileCalc(){
+  const w=+document.getElementById('pWeight').value||76.6,h=+document.getElementById('pHeight').value||178;
+  document.getElementById('bmiText').innerHTML=`<b>ИМТ:</b> ${(w/Math.pow(h/100,2)).toFixed(1)} · <b>Белок:</b> ${Math.round(w*2.1)}–${Math.round(w*2.2)} г/день · <b>Цель:</b> вес 76–77 кг, талия меньше 82 см`;
+}
+['pWeight','pHeight'].forEach(id=>document.getElementById(id).addEventListener('input',profileCalc));
+document.getElementById('saveProfile').onclick=()=>{
+  localStorage.setItem('gymProfile',JSON.stringify({w:pWeight.value,h:pHeight.value,a:pAge.value,waist:pWaist.value}));alert('Сохранено');
+};
+try{const p=JSON.parse(localStorage.getItem('gymProfile'));if(p){pWeight.value=p.w;pHeight.value=p.h;pAge.value=p.a;pWaist.value=p.waist}}catch(e){}
+profileCalc();
+
+const getMeasures=()=>JSON.parse(localStorage.getItem('gymMeasures')||'[]');
+document.getElementById('mDate').valueAsDate=new Date();
+document.getElementById('addMeasure').onclick=()=>{
+  const a=getMeasures();a.push({date:mDate.value,weight:mWeight.value,waist:mWaist.value,chest:mChest.value,shoulders:mShoulders.value,bicep:mBicep.value,forearm:mForearm.value,leg:mLeg.value});
+  localStorage.setItem('gymMeasures',JSON.stringify(a));renderMeasures();drawChart();
+};
+function renderMeasures(){
+  const a=getMeasures();
+  document.getElementById('measureTable').innerHTML=a.length?`<table><tr><th>Дата</th><th>Вес</th><th>Талия</th><th>Грудь</th><th>Бицепс</th><th></th></tr>${a.map((m,i)=>`<tr><td>${m.date||''}</td><td>${m.weight||'—'}</td><td>${m.waist||'—'}</td><td>${m.chest||'—'}</td><td>${m.bicep||'—'}</td><td><button class="btn-ghost" onclick="delMeasure(${i})">Удалить</button></td></tr>`).join('')}</table>`:'<p class="meta">Замеров пока нет.</p>';
+}
+function delMeasure(i){const a=getMeasures();a.splice(i,1);localStorage.setItem('gymMeasures',JSON.stringify(a));renderMeasures();drawChart()}
+function drawChart(){
+  const c=document.getElementById('chart');if(!c)return;const ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);
+  const a=getMeasures().filter(x=>x.weight||x.waist);
+  ctx.fillStyle='#86868b';ctx.font='16px -apple-system';
+  if(!a.length){ctx.fillText('Добавь первый замер, чтобы увидеть график',24,40);return}
+  const draw=(key,color,label,y)=>{
+    const vals=a.map(x=>+x[key]).filter(Boolean);if(!vals.length)return;
+    const min=Math.min(...vals)-2,max=Math.max(...vals)+2;ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=3;ctx.beginPath();
+    a.forEach((m,i)=>{if(!m[key])return;const x=a.length===1?450:40+i*(820/(a.length-1));const yy=185-((+m[key]-min)/(max-min))*145;i?ctx.lineTo(x,yy):ctx.moveTo(x,yy);ctx.fillRect(x-4,yy-4,8,8)});ctx.stroke();ctx.fillText(label,24,y);
+  };
+  draw('weight','#0071e3','Вес, кг',24);draw('waist','#34c759','Талия, см',48);
+}
+renderMeasures();
+
+/* Прогресс */
+const exSel=document.getElementById('exSelect');
+Object.entries(PROGRAM).forEach(([d,p])=>p.ex.forEach(e=>exSel.innerHTML+=`<option value="${d}_${e.id}">${d.toUpperCase()} · ${e.name}</option>`));
+function renderProgress(){
+  const logs=getLogs();let ups=[];
+  Object.entries(PROGRAM).forEach(([d,p])=>p.ex.forEach(ex=>{
+    let ok=true,filled=true;
+    for(let s=1;s<=ex.sets;s++){const v=logs[`w${week}_${d}_${ex.id}_s${s}`];if(!v||!v.r)filled=false;if(!v||+v.r<ex.max)ok=false}
+    if(filled&&ok&&ex.max!==999)ups.push(`${ex.name} → <b>+1–2 кг</b>`);
+  }));
+  document.getElementById('upList').innerHTML=ups.length?ups.map(u=>`<p>✓ ${u}</p>`).join(''):'<p class="meta">Пока нет. Закрой максимум повторений во всех подходах одного упражнения.</p>';
+  const [d,id]=exSel.value.split('_'),ex=PROGRAM[d].ex.find(x=>x.id===id);let rows='';
+  for(let w=1;w<=12;w++){let sets=[];for(let s=1;s<=ex.sets;s++){const v=logs[`w${w}_${d}_${id}_s${s}`];if(v&&v.w)sets.push(`${v.w} кг × ${v.r||'?'}`)}if(sets.length)rows+=`<tr><td>Неделя ${w}</td><td>${sets.join(' · ')}</td></tr>`}
+  document.getElementById('exHistory').innerHTML=rows?`<table><tr><th>Неделя</th><th>Подходы</th></tr>${rows}</table>`:'<p class="meta">Нет записей по этому упражнению.</p>';
+}
+exSel.onchange=renderProgress;
+render();
+</script>
+</body>
+</html>
